@@ -64,11 +64,15 @@ public class Tiki {
     private static void run(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
+        Parser parser = new Parser(tokens);
+        Expr expression = parser.parse();
 
-        // FIXME: For now, just print the tokens
-        for (Token token : tokens) {
-            System.out.println(token);
+        // Stop if there was a syntax error
+        if (hadError) {
+            return;
         }
+
+        System.out.println(new AstPrinter().print(expression));
     }
 
     /**
@@ -91,5 +95,13 @@ public class Tiki {
     private static void report(int line, String where, String message) {
         System.err.printf("[line %d] Error%s: %s", line, where, message);
         hadError = true;
+    }
+
+    static void error(Token token, String message) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, " at end", message);
+        } else {
+            report(token.line, String.format(" at '%s'", token.lexeme), message);
+        }
     }
 }
