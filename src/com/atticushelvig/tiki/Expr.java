@@ -17,6 +17,8 @@ abstract class Expr {
         R visitLiteralExpr(Literal literal);
 
         R visitUnaryExpr(Unary unary);
+
+        R visitTernaryExpr(Ternary ternary);
     }
 
     static class Binary extends Expr {
@@ -74,6 +76,25 @@ abstract class Expr {
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitUnaryExpr(this);
+        }
+    }
+
+    static class Ternary extends Expr {
+        final Token operator;
+        final Expr first;
+        final Expr middle;
+        final Expr last;
+
+        Ternary(Token operator, Expr first, Expr middle, Expr last) {
+            this.operator = operator;
+            this.first = first;
+            this.middle = middle;
+            this.last = last;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitTernaryExpr(this);
         }
     }
 

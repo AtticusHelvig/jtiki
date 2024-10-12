@@ -28,7 +28,20 @@ class Parser {
     }
 
     private Expr expression() {
-        return equality();
+        return conditional();
+    }
+
+    private Expr conditional() {
+        Expr expr = equality();
+
+        while (match(TokenType.CONDITONAL)) {
+            Token operator = previous();
+            Expr left = conditional();
+            consume(TokenType.COLON, "Expect ':' after conditional.");
+            Expr right = conditional();
+            expr = new Expr.Ternary(operator, expr, left, right);
+        }
+        return expr;
     }
 
     /**

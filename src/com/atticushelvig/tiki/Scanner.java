@@ -91,6 +91,12 @@ public class Scanner {
             case '*':
                 addToken(TokenType.STAR);
                 break;
+            case '?':
+                addToken(TokenType.CONDITONAL);
+                break;
+            case ':':
+                addToken(TokenType.COLON);
+                break;
             case '!':
                 addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
                 break;

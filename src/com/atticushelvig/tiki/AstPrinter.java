@@ -1,10 +1,5 @@
 package com.atticushelvig.tiki;
 
-import com.atticushelvig.tiki.Expr.Binary;
-import com.atticushelvig.tiki.Expr.Grouping;
-import com.atticushelvig.tiki.Expr.Literal;
-import com.atticushelvig.tiki.Expr.Unary;
-
 /**
  * Visitor to print our abstract syntax trees
  *
@@ -18,17 +13,17 @@ class AstPrinter implements Expr.Visitor<String> {
     }
 
     @Override
-    public String visitBinaryExpr(Binary expr) {
+    public String visitBinaryExpr(Expr.Binary expr) {
         return parenthesize(expr.operator.lexeme, expr.left, expr.right);
     }
 
     @Override
-    public String visitGroupingExpr(Grouping expr) {
+    public String visitGroupingExpr(Expr.Grouping expr) {
         return parenthesize("group", expr.expression);
     }
 
     @Override
-    public String visitLiteralExpr(Literal expr) {
+    public String visitLiteralExpr(Expr.Literal expr) {
         if (expr.value == null) {
             return "nil";
         }
@@ -36,8 +31,13 @@ class AstPrinter implements Expr.Visitor<String> {
     }
 
     @Override
-    public String visitUnaryExpr(Unary expr) {
+    public String visitUnaryExpr(Expr.Unary expr) {
         return parenthesize(expr.operator.lexeme, expr.right);
+    }
+
+    @Override
+    public String visitTernaryExpr(Expr.Ternary expr) {
+        return parenthesize(expr.operator.lexeme, expr.first, expr.middle, expr.last);
     }
 
     /**
