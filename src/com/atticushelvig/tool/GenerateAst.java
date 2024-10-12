@@ -29,12 +29,17 @@ public class GenerateAst {
         writer.println("/**\n * Automatically created by com.atticushelvig.tool.GenerateAst\n */");
         writer.println(String.format("abstract class %s {", baseName));
 
+        defineVisitor(writer, baseName, types);
+
         // The AST classes
         for (String type : types) {
             String className = type.split(":")[0].trim();
             String fields = type.split(":")[1].trim();
             defineType(writer, baseName, className, fields);
         }
+
+        // The base accept() method
+        writer.println("\n    abstract <R> R accept(Visitor<R> visitor);");
 
         writer.println("}");
         writer.close();
@@ -49,7 +54,7 @@ public class GenerateAst {
         }
 
         // Constructor
-        writer.println(String.format("        %s(%s){", className, fieldList));
+        writer.println(String.format("\n        %s(%s){", className, fieldList));
 
         // Store parameters in fields
         for (String field : fields) {
@@ -57,8 +62,25 @@ public class GenerateAst {
             writer.println(String.format("            this.%1$s = %1$s;", name));
 
         }
+        writer.println("        }\n");
+
+        // Visitor pattern
+        writer.println("        @Override");
+        writer.println("        <R> R accept(Visitor<R> visitor) {");
+        writer.println(String.format("            return visitor.visit%s%s(this);", className, baseName));
         writer.println("        }");
 
+        writer.println("    }");
+    }
+
+    private static void defineVisitor(PrintWriter writer, String baseName, List<String> types) {
+        writer.println("    interface Visitor<R> {");
+
+        for (String type : types) {
+            String typeName = type.split(":")[0].trim();
+            writer.println(
+                    String.format("        R visit%1$s%2$s(%1$s %3$s);", typeName, baseName, typeName.toLowerCase()));
+        }
         writer.println("    }");
     }
 }
