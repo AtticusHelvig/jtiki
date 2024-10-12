@@ -27,7 +27,10 @@ public class GenerateAst {
         writer.println("package com.atticushelvig.tiki;\n");
         writer.println("import java.util.List;\n");
         writer.println("/**\n * Automatically created by com.atticushelvig.tool.GenerateAst\n */");
-        writer.println(String.format("abstract class %s {", baseName));
+        writer.println(String.format("abstract class %s {\n", baseName));
+
+        // The base accept() method
+        writer.println("    abstract <R> R accept(Visitor<R> visitor);\n");
 
         defineVisitor(writer, baseName, types);
 
@@ -38,10 +41,8 @@ public class GenerateAst {
             defineType(writer, baseName, className, fields);
         }
 
-        // The base accept() method
-        writer.println("\n    abstract <R> R accept(Visitor<R> visitor);");
-
         writer.println("}");
+
         writer.close();
     }
 
@@ -70,7 +71,7 @@ public class GenerateAst {
         writer.println(String.format("            return visitor.visit%s%s(this);", className, baseName));
         writer.println("        }");
 
-        writer.println("    }");
+        writer.println("    }\n");
     }
 
     private static void defineVisitor(PrintWriter writer, String baseName, List<String> types) {
@@ -81,6 +82,6 @@ public class GenerateAst {
             writer.println(
                     String.format("        R visit%1$s%2$s(%1$s %3$s);", typeName, baseName, typeName.toLowerCase()));
         }
-        writer.println("    }");
+        writer.println("    }\n");
     }
 }
