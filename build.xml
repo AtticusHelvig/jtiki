@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<project name="jtiki" default="main" basedir=".">
+    <property name="src.dir" location="src" />
+    <property name="build.dir" location="bin" />
+
+    <target name="clean">
+        <delete dir="${build.dir}" />
+    </target>
+
+    <target name="makedir">
+        <mkdir dir="${build.dir}" />
+    </target>
+
+    <target name="compile" depends="clean, makedir">
+        <javac includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}">
+        </javac>
+    </target>
+
+    <target name="main" depends="compile">
+        <description>Main target</description>
+    </target>
+</project>
