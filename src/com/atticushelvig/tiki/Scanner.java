@@ -204,6 +204,14 @@ public class Scanner {
      */
     private void string() {
         while (peek() != '"' && !isAtEnd()) {
+            if (peek() == '\\') {
+                // NOTE: Skips characters after a '\' for escape sequences
+                advance();
+                if (isAtEnd()) {
+                    System.err.println("SHOUT");
+                    break;
+                }
+            }
             if (peek() == '\n') {
                 line++;
             }
@@ -211,10 +219,11 @@ public class Scanner {
         }
         if (isAtEnd()) {
             Tiki.error(line, "Unterminated string.");
+            return;
+        } else {
+            // The closing "
+            advance();
         }
-
-        // The closing "
-        advance();
 
         // Trim surrounding quotes and escape characters
         String value = unescape(source.substring(start + 1, current - 1));
@@ -228,15 +237,49 @@ public class Scanner {
      * @return modified String
      */
     private String unescape(String target) {
-        return target
-                .replaceAll("\\t", "\t")
-                .replaceAll("\\b", "\b")
-                .replaceAll("\\n", "\n")
-                .replaceAll("\\r", "\r")
-                .replaceAll("\\f", "\f")
-                .replaceAll("\\\'", "\'")
-                .replaceAll("\\\"", "\"")
-                .replaceAll("\\\\", "\\");
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < target.length(); i++) {
+            if (target.charAt(i) == '\\') {
+                // Handles the '\' at the end of the string case
+                if (i + 1 >= target.length()) {
+                    throw new IllegalArgumentException("Invalid escape string.");
+                }
+
+                char c = target.charAt(++i);
+                switch (c) {
+                    case 't':
+                        sb.append('\t');
+                        break;
+                    case 'b':
+                        sb.append('\b');
+                        break;
+                    case 'n':
+                        sb.append('\n');
+                        break;
+                    case 'r':
+                        sb.append('\r');
+                        break;
+                    case 'f':
+                        sb.append('\f');
+                        break;
+                    case '\'':
+                        sb.append('\'');
+                        break;
+                    case '"':
+                        sb.append('\"');
+                        break;
+                    case '\\':
+                        sb.append('\\');
+                        break;
+                    default:
+                        throw new IllegalArgumentException(String.format("Unsupported escape sequence: '\\%c'", c));
+                }
+            } else {
+                sb.append(target.charAt(i));
+            }
+        }
+        return sb.toString();
     }
 
     /**
