@@ -14,7 +14,9 @@ import java.util.List;
  * @author Atticus Helvig
  */
 public class Tiki {
+    private static final Interpreter interpreter = new Interpreter();
     static boolean hadError = false;
+    static boolean hadRuntimeError = false;
 
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
@@ -37,6 +39,9 @@ public class Tiki {
         run(new String(bytes, Charset.defaultCharset()));
         if (hadError) {
             System.exit(65);
+        }
+        if (hadRuntimeError) {
+            System.exit(70);
         }
     }
 
@@ -72,7 +77,7 @@ public class Tiki {
             return;
         }
 
-        System.out.println(new AstPrinter().print(expression));
+        interpreter.interpret(expression);
     }
 
     /**
@@ -83,6 +88,11 @@ public class Tiki {
      */
     public static void error(int line, String message) {
         report(line, "", message);
+    }
+
+    public static void runtimeError(RuntimeError error) {
+        System.err.println(String.format("%s\n[line %d]", error.getMessage(), error.token.line));
+        hadRuntimeError = true;
     }
 
     /**
