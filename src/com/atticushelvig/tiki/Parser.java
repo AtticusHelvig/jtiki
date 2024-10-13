@@ -113,7 +113,7 @@ class Parser {
         }
 
         if (match(TokenType.NUMBER, TokenType.STRING)) {
-            return new Expr.Literal(previous());
+            return new Expr.Literal(previous().literal);
         }
 
         if (match(TokenType.LEFT_PAREN)) {
