@@ -90,7 +90,7 @@ class Interpreter implements Expr.Visitor<Object> {
 
         switch (expr.operator.type) {
             case CONDITONAL:
-                if (isTruthy(expr.first)) {
+                if (isTruthy(evaluate(expr.first))) {
                     return middle;
                 }
                 return last;
