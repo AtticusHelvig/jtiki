@@ -40,6 +40,11 @@ class AstPrinter implements Expr.Visitor<String> {
         return parenthesize(expr.operator.lexeme, expr.first, expr.middle, expr.last);
     }
 
+    @Override
+    public String visitVariableExpr(Expr.Variable expr) {
+        return expr.name.lexeme;
+    }
+
     /**
      * Helper function to format expressions
      */
