@@ -11,14 +11,14 @@ abstract class Stmt {
 
     interface Visitor<R> {
         R visitExpressionStmt(Expression expression);
-
         R visitPrintStmt(Print print);
+        R visitLetStmt(Let let);
     }
 
     static class Expression extends Stmt {
         final Expr expression;
 
-        Expression(Expr expression) {
+        Expression(Expr expression){
             this.expression = expression;
         }
 
@@ -31,13 +31,28 @@ abstract class Stmt {
     static class Print extends Stmt {
         final Expr expression;
 
-        Print(Expr expression) {
+        Print(Expr expression){
             this.expression = expression;
         }
 
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitPrintStmt(this);
+        }
+    }
+
+    static class Let extends Stmt {
+        final Token name;
+        final Expr initializer;
+
+        Let(Token name, Expr initializer){
+            this.name = name;
+            this.initializer = initializer;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitLetStmt(this);
         }
     }
 
