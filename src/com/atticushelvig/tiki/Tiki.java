@@ -70,14 +70,14 @@ public class Tiki {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
         Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
+        List<Stmt> statements = parser.parse();
 
         // Stop if there was a syntax error
         if (hadError) {
             return;
         }
 
-        interpreter.interpret(expression);
+        interpreter.interpret(statements);
     }
 
     /**
@@ -103,7 +103,7 @@ public class Tiki {
      * @param message to report
      */
     private static void report(int line, String where, String message) {
-        System.err.printf("[line %d] Error%s: %s", line, where, message);
+        System.err.printf("[line %d] Error%s: %s\n", line, where, message);
         hadError = true;
     }
 

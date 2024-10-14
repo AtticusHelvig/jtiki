@@ -11,13 +11,9 @@ abstract class Expr {
 
     interface Visitor<R> {
         R visitBinaryExpr(Binary binary);
-
         R visitGroupingExpr(Grouping grouping);
-
         R visitLiteralExpr(Literal literal);
-
         R visitUnaryExpr(Unary unary);
-
         R visitTernaryExpr(Ternary ternary);
     }
 
@@ -26,7 +22,7 @@ abstract class Expr {
         final Token operator;
         final Expr right;
 
-        Binary(Expr left, Token operator, Expr right) {
+        Binary(Expr left, Token operator, Expr right){
             this.left = left;
             this.operator = operator;
             this.right = right;
@@ -41,7 +37,7 @@ abstract class Expr {
     static class Grouping extends Expr {
         final Expr expression;
 
-        Grouping(Expr expression) {
+        Grouping(Expr expression){
             this.expression = expression;
         }
 
@@ -54,7 +50,7 @@ abstract class Expr {
     static class Literal extends Expr {
         final Object value;
 
-        Literal(Object value) {
+        Literal(Object value){
             this.value = value;
         }
 
@@ -68,7 +64,7 @@ abstract class Expr {
         final Token operator;
         final Expr right;
 
-        Unary(Token operator, Expr right) {
+        Unary(Token operator, Expr right){
             this.operator = operator;
             this.right = right;
         }
@@ -85,7 +81,7 @@ abstract class Expr {
         final Expr middle;
         final Expr last;
 
-        Ternary(Token operator, Expr first, Expr middle, Expr last) {
+        Ternary(Token operator, Expr first, Expr middle, Expr last){
             this.operator = operator;
             this.first = first;
             this.middle = middle;
