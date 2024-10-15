@@ -8,10 +8,6 @@ package com.atticushelvig.tiki;
  */
 class AstPrinter implements Expr.Visitor<String> {
 
-    String print(Expr expr) {
-        return expr.accept(this);
-    }
-
     @Override
     public String visitAssignExpr(Expr.Assign expr) {
         return parenthesize(expr.name.lexeme, expr.value);
@@ -48,6 +44,15 @@ class AstPrinter implements Expr.Visitor<String> {
     @Override
     public String visitVariableExpr(Expr.Variable expr) {
         return expr.name.lexeme;
+    }
+
+    @Override
+    public String visitLogicalExpr(Expr.Logical expr) {
+        return parenthesize(expr.operator.lexeme, expr.left, expr.right);
+    }
+
+    String print(Expr expr) {
+        return expr.accept(this);
     }
 
     /**
