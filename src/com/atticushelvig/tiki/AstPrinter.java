@@ -1,5 +1,7 @@
 package com.atticushelvig.tiki;
 
+import java.util.List;
+
 /**
  * Visitor to print our abstract syntax trees
  *
@@ -16,6 +18,11 @@ class AstPrinter implements Expr.Visitor<String> {
     @Override
     public String visitBinaryExpr(Expr.Binary expr) {
         return parenthesize(expr.operator.lexeme, expr.left, expr.right);
+    }
+
+    @Override
+    public String visitCallExpr(Expr.Call expr) {
+        return parenthesize("function", expr.arguments);
     }
 
     @Override
@@ -59,6 +66,19 @@ class AstPrinter implements Expr.Visitor<String> {
      * Helper function to format expressions
      */
     private String parenthesize(String name, Expr... exprs) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("(").append(name);
+        for (Expr expr : exprs) {
+            builder.append(" ");
+            builder.append(expr.accept(this));
+        }
+        builder.append(")");
+
+        return builder.toString();
+    }
+
+    private String parenthesize(String name, List<Expr> exprs) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("(").append(name);

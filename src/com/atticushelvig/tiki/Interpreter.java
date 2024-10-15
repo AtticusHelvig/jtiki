@@ -1,9 +1,30 @@
 package com.atticushelvig.tiki;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
-    private Environment environment = new Environment();
+    final Environment globals = new Environment();
+    private Environment environment = globals;
+
+    Interpreter() {
+        globals.define("clock", new TikiCallable() {
+            @Override
+            public int arity() {
+                return 0;
+            }
+
+            @Override
+            public Object call(Interpreter interpreter, List<Object> arguments) {
+                return (double) System.currentTimeMillis() / 1000.0;
+            }
+
+            @Override
+            public String toString() {
+                return "<native fn>";
+            }
+        });
+    }
 
     @Override
     public Object visitAssignExpr(Expr.Assign expr) {
@@ -61,6 +82,25 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
                 return null;
         }
 
+    }
+
+    @Override
+    public Object visitCallExpr(Expr.Call expr) {
+        Object callee = evaluate(expr.callee);
+
+        List<Object> arguments = new ArrayList<>();
+        for (Expr argument : expr.arguments) {
+            arguments.add(evaluate(argument));
+        }
+        if (!(callee instanceof TikiCallable)) {
+            throw new RuntimeError(expr.paren, "Can only call functions and classes.");
+        }
+        TikiCallable function = (TikiCallable) callee;
+        if (arguments.size() != function.arity()) {
+            throw new RuntimeError(expr.paren,
+                    String.format("Expected %d arguments, but go %d.", function.arity(), arguments.size()));
+        }
+        return function.call(this, arguments);
     }
 
     @Override
