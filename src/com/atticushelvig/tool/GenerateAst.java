@@ -25,6 +25,7 @@ public class GenerateAst {
         defineAst(outputDir, "Stmt", Arrays.asList(
                 "Block      : List<Stmt> statements",
                 "Expression : Expr expression",
+                "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
                 "Print      : Expr expression",
                 "Let        : Token name, Expr initializer"));
     }
@@ -89,7 +90,7 @@ public class GenerateAst {
         for (String type : types) {
             String typeName = type.split(":")[0].trim();
             writer.println(
-                    String.format("        R visit%1$s%2$s(%1$s %3$s);", typeName, baseName, typeName.toLowerCase()));
+                    String.format("        R visit%1$s%2$s(%1$s %3$s);", typeName, baseName, baseName.toLowerCase()));
         }
         writer.println("    }\n");
     }
