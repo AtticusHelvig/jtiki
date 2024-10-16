@@ -112,6 +112,16 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     @Override
+    public Object visitGetExpr(Expr.Get expr) {
+        Object object = evaluate(expr.object);
+        if (object instanceof TikiInstance) {
+            return ((TikiInstance) object).get(expr.name);
+        }
+
+        throw new RuntimeError(expr.name, "Only instances have properties.");
+    }
+
+    @Override
     public Object visitGroupingExpr(Expr.Grouping expr) {
         return evaluate(expr.expression);
     }
@@ -135,6 +145,19 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
             }
         }
         return evaluate(expr.right);
+    }
+
+    @Override
+    public Object visitSetExpr(Expr.Set expr) {
+        Object object = evaluate(expr.object);
+
+        if (!(object instanceof TikiInstance)) {
+            throw new RuntimeError(expr.name, "Only instances have fields.");
+        }
+
+        Object value = evaluate(expr.value);
+        ((TikiInstance) object).set(expr.name, value);
+        return value;
     }
 
     @Override
@@ -176,6 +199,21 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Void visitBlockStmt(Stmt.Block stmt) {
         executeBlock(stmt.statements, new Environment(environment));
+        return null;
+    }
+
+    @Override
+    public Void visitClassStmt(Stmt.Class stmt) {
+        environment.define(stmt.name.lexeme, null);
+
+        Map<String, TikiFunction> methods = new HashMap<>();
+        for (Stmt.Function method : stmt.methods) {
+            TikiFunction function = new TikiFunction(method, environment);
+            methods.put(method.name.lexeme, function);
+        }
+
+        TikiClass tikiClass = new TikiClass(stmt.name.lexeme, methods);
+        environment.assign(stmt.name, tikiClass);
         return null;
     }
 
