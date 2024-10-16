@@ -11,6 +11,12 @@ class TikiFunction implements TikiCallable {
         this.closure = closure;
     }
 
+    TikiFunction bind(TikiInstance instance) {
+        Environment environment = new Environment(closure);
+        environment.define("this", instance);
+        return new TikiFunction(declaration, environment);
+    }
+
     @Override
     public int arity() {
         return declaration.params.size();

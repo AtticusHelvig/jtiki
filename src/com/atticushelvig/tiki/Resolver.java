@@ -9,11 +9,17 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private final Interpreter interpreter;
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
     private FunctionType currentFunction = FunctionType.NONE;
+    private ClassType currentClass = ClassType.NONE;
 
     private enum FunctionType {
         NONE,
         FUNCTION,
         METHOD
+    }
+
+    private enum ClassType {
+        NONE,
+        CLASS
     }
 
     Resolver(Interpreter interpreter) {
@@ -47,14 +53,22 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitClassStmt(Stmt.Class stmt) {
+        ClassType enclosingClass = currentClass;
+        currentClass = ClassType.CLASS;
+
         declare(stmt.name);
+
+        beginScope();
+        scopes.peek().put("this", true);
 
         for (Stmt.Function method : stmt.methods) {
             FunctionType declaration = FunctionType.METHOD;
             resolveFunction(method, declaration);
         }
+        endScope();
 
         define(stmt.name);
+        currentClass = enclosingClass;
         return null;
     }
 
@@ -160,6 +174,16 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     public Void visitSetExpr(Expr.Set expr) {
         resolve(expr.value);
         resolve(expr.object);
+        return null;
+    }
+
+    @Override
+    public Void visitThisExpr(Expr.This expr) {
+        if (currentClass == ClassType.NONE) {
+            Tiki.error(expr.keyword, "Cannot use 'this' outside of a class.");
+            return null;
+        }
+        resolveLocal(expr, expr.keyword);
         return null;
     }
 
