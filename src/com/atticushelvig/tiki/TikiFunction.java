@@ -5,16 +5,18 @@ import java.util.List;
 class TikiFunction implements TikiCallable {
     private final Stmt.Function declaration;
     private final Environment closure;
+    private final boolean isInitializer;
 
-    TikiFunction(Stmt.Function declaration, Environment closure) {
+    TikiFunction(Stmt.Function declaration, Environment closure, boolean isInitializer) {
         this.declaration = declaration;
         this.closure = closure;
+        this.isInitializer = isInitializer;
     }
 
     TikiFunction bind(TikiInstance instance) {
         Environment environment = new Environment(closure);
         environment.define("this", instance);
-        return new TikiFunction(declaration, environment);
+        return new TikiFunction(declaration, environment, isInitializer);
     }
 
     @Override
@@ -32,7 +34,14 @@ class TikiFunction implements TikiCallable {
         try {
             interpreter.executeBlock(declaration.body, environment);
         } catch (Return returnValue) {
+            if (isInitializer) {
+                return closure.getAt(0, "this");
+            }
             return returnValue.value;
+        }
+
+        if (isInitializer) {
+            return closure.getAt(0, "this");
         }
         return null;
     }

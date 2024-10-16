@@ -213,7 +213,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
         Map<String, TikiFunction> methods = new HashMap<>();
         for (Stmt.Function method : stmt.methods) {
-            TikiFunction function = new TikiFunction(method, environment);
+            TikiFunction function = new TikiFunction(method, environment, stmt.name.lexeme.equals("init"));
             methods.put(method.name.lexeme, function);
         }
 
@@ -230,7 +230,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitFunctionStmt(Stmt.Function stmt) {
-        TikiFunction function = new TikiFunction(stmt, environment);
+        TikiFunction function = new TikiFunction(stmt, environment, false);
         environment.define(stmt.name.lexeme, function);
         return null;
     }

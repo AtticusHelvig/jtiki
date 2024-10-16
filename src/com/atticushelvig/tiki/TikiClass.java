@@ -21,12 +21,20 @@ class TikiClass implements TikiCallable {
 
     @Override
     public int arity() {
-        return 0;
+        TikiFunction initializer = findMethod("init");
+        if (initializer == null) {
+            return 0;
+        }
+        return initializer.arity();
     }
 
     @Override
     public Object call(Interpreter interpreter, List<Object> arguments) {
         TikiInstance instance = new TikiInstance(this);
+        TikiFunction initializer = findMethod("init");
+        if (initializer != null) {
+            initializer.bind(instance).call(interpreter, arguments);
+        }
         return instance;
     }
 
