@@ -31,6 +31,9 @@ class Parser {
 
     private Stmt declaration() {
         try {
+            if (match(TokenType.FN)) {
+                return function("function");
+            }
             if (match(TokenType.LET)) {
                 return varDeclaration();
             }
@@ -146,6 +149,28 @@ class Parser {
         Expr value = expression();
         consume(TokenType.SEMICOLON, "Expect ';' after expression.");
         return new Stmt.Expression(value);
+    }
+
+    private Stmt.Function function(String type) {
+        // Name
+        Token name = consume(TokenType.IDENTIFIER, String.format("Expect %s name.", type));
+        // Paramaters
+        consume(TokenType.LEFT_PAREN, String.format("Expect '(' after %s name.", type));
+        List<Token> params = new ArrayList<>();
+        if (!check(TokenType.RIGHT_PAREN)) {
+            do {
+                if (params.size() >= 255) {
+                    error(peek(), "Cannot have more than 255 parameters.");
+                }
+                params.add(consume(TokenType.IDENTIFIER, "Expect paramter name."));
+            } while (match(TokenType.COMMA));
+        }
+        consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+        // Body
+        consume(TokenType.LEFT_BRACE, String.format("Expect '{' before %s body.", type));
+        List<Stmt> body = block();
+
+        return new Stmt.Function(name, params, body);
     }
 
     private Stmt varDeclaration() {
@@ -293,7 +318,7 @@ class Parser {
                     error(peek(), "Cannot have more than 255 arguments.");
                 }
                 arguments.add(expression());
-            } while (!match(TokenType.COMMA));
+            } while (match(TokenType.COMMA));
         }
         Token paren = consume(TokenType.RIGHT_PAREN, "Expect ')' after arguments.");
         return new Expr.Call(callee, paren, arguments);
