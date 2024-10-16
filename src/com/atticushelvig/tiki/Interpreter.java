@@ -5,12 +5,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Interpreter to execute parsed statements
+ *
+ * @author Atticus Helvig
+ */
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     final Environment globals = new Environment();
     private Environment environment = globals;
     private final Map<Expr, Integer> locals = new HashMap<>();
 
     Interpreter() {
+        // Defined foreign functions here for simplicity
+        // https://en.wikipedia.org/wiki/Foreign_function_interface
         globals.define("clock", new TikiCallable() {
             @Override
             public int arity() {
@@ -315,6 +322,11 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         return null;
     }
 
+    /**
+     * Main functionality of Interpreter
+     * 
+     * @param statements to interpret
+     */
     void interpret(List<Stmt> statements) {
         try {
             for (Stmt statement : statements) {
@@ -339,6 +351,13 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
     }
 
+    /**
+     * Tells the interpreter that a symbol exists and
+     * at what scope level
+     *
+     * @param expr  to make accessible
+     * @param depth to make it accessible at
+     */
     void resolve(Expr expr, int depth) {
         locals.put(expr, depth);
     }
@@ -379,6 +398,11 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         return a.equals(b);
     }
 
+    /**
+     * Checks if an operand is a Double
+     *
+     * @throws RuntimeError if the operand is not a Double
+     */
     private void checkNumberOperand(Token operator, Object operand) {
         if (operand instanceof Double) {
             return;
@@ -386,6 +410,11 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         throw new RuntimeError(operator, "Operand must be a number.");
     }
 
+    /**
+     * Checks if any number of operands are Doubles
+     *
+     * @throws RuntimeError if the operands are not Doubles
+     */
     private void checkNumberOperands(Token operator, Object... operands) {
         for (Object operand : operands) {
             try {

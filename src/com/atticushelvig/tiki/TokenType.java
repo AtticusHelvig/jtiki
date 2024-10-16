@@ -1,5 +1,10 @@
 package com.atticushelvig.tiki;
 
+/**
+ * Represents the various types of Tokens recognized by the Parser
+ *
+ * @author Atticus Helvig
+ */
 enum TokenType {
     // Single-character tokens
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,

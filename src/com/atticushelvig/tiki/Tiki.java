@@ -64,7 +64,9 @@ public class Tiki {
     }
 
     /**
-     * Tokenizes source code
+     * Runs source code given a String of it
+     *
+     * @param source code to run
      */
     private static void run(String source) {
         Scanner scanner = new Scanner(source);
@@ -107,7 +109,7 @@ public class Tiki {
      * Report a message to the user (usually an error)
      *
      * @param line    number to reference
-     * @param where   I have no idea what this is for
+     * @param where   the error occured, usally a token
      * @param message to report
      */
     private static void report(int line, String where, String message) {

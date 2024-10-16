@@ -2,6 +2,12 @@ package com.atticushelvig.tiki;
 
 import java.util.List;
 
+/**
+ * Represents a function in the tiki language, includes methods
+ *
+ * @author Atticus Helvig
+ * @see TikiCallable
+ */
 class TikiFunction implements TikiCallable {
     private final Stmt.Function declaration;
     private final Environment closure;
@@ -13,12 +19,20 @@ class TikiFunction implements TikiCallable {
         this.isInitializer = isInitializer;
     }
 
+    /**
+     * Binds a method to its class instance through the 'this' keyword
+     *
+     * @param instance of the class to bind to
+     */
     TikiFunction bind(TikiInstance instance) {
         Environment environment = new Environment(closure);
         environment.define("this", instance);
         return new TikiFunction(declaration, environment, isInitializer);
     }
 
+    /**
+     * @return the number of arguments a function takes
+     */
     @Override
     public int arity() {
         return declaration.params.size();

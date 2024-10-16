@@ -7,6 +7,8 @@ import java.util.HashMap;
 
 /**
  * Scans Strings of source code and tokenizes them
+ *
+ * @author Atticus Helvig
  */
 public class Scanner {
     private static final Map<String, TokenType> keywords;
@@ -142,7 +144,9 @@ public class Scanner {
     }
 
     /**
-     * Consumes the next character in the source file and returns it
+     * Consumes the next character
+     *
+     * @return the character consumed
      */
     private char advance() {
         return source.charAt(current++);

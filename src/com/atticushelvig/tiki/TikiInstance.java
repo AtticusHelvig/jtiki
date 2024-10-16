@@ -3,6 +3,11 @@ package com.atticushelvig.tiki;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents an instance of a class (Object)
+ *
+ * @author Atticus Helvig
+ */
 class TikiInstance {
     private TikiClass tikiClass;
     private Map<String, Object> fields = new HashMap<>();

@@ -3,6 +3,11 @@ package com.atticushelvig.tiki;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents an environment (or scope) where variables and functions live
+ *
+ * @author Atticus Helvig
+ */
 class Environment {
     final Environment enclosing;
     private final Map<String, Object> values = new HashMap<>();
@@ -15,10 +20,20 @@ class Environment {
         this.enclosing = enclosing;
     }
 
+    /**
+     * @param distance number of Enviroments upwards in scope to get from
+     * @param name     to find value of
+     *
+     * @return the value associated with 'name', from the Enviroment
+     *         'distance' above the current
+     */
     Object getAt(int distance, String name) {
         return ancestor(distance).values.get(name);
     }
 
+    /**
+     * @return the Environment 'distance' levels above the current
+     */
     Environment ancestor(int distance) {
         Environment environment = this;
         for (int i = 0; i < distance; i++) {
@@ -31,6 +46,11 @@ class Environment {
         values.put(name, value);
     }
 
+    /**
+     * @param distance number of Enviroments upwards in scope to assign to
+     * @param name     to assign 'value' to
+     * @param value    to be assigned
+     */
     void assignAt(int distance, Token name, Object value) {
         ancestor(distance).values.put(name.lexeme, value);
     }
