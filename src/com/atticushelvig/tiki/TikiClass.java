@@ -5,16 +5,21 @@ import java.util.Map;
 
 class TikiClass implements TikiCallable {
     final String name;
+    final TikiClass superclass;
     private final Map<String, TikiFunction> methods;
 
-    TikiClass(String name, Map<String, TikiFunction> methods) {
+    TikiClass(String name, TikiClass superclass, Map<String, TikiFunction> methods) {
         this.name = name;
+        this.superclass = superclass;
         this.methods = methods;
     }
 
     TikiFunction findMethod(String name) {
         if (methods.containsKey(name)) {
             return methods.get(name);
+        }
+        if (superclass != null) {
+            return superclass.findMethod(name);
         }
         return null;
     }
