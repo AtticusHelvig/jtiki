@@ -1,5 +1,7 @@
 # jtiki
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 jtiki is an interpreter for my own language, tiki. I'm mostly following along with the book [Crafting Interpreters](https://www.craftinginterpreters.com/) by Robert Nystrom. It's written in Java, as per part two of the book. However, not all features are identical. At my own discretion I have made changes or additions I found interesting.
 
 ## How to build
@@ -25,4 +27,13 @@ After installing ant, run the following commands.
 git clone https://github.com/AtticusHelvig/jtiki.git
 cd ./jtiki
 ant
+```
+
+### Generating Expr and Stmt
+
+jtiki has an automatic build option for the Stmt and Expr classes made by the GenerateAst class.
+
+Assuming you are in the jtiki directory and have ant installed, run the following command to generate those classes.
+```
+ant gen
 ```
