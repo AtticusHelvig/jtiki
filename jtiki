@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Set the path to the .jar file
+JAR_FILE="./dist/jtiki.jar"
+
+# Check if the .jar file exists
+if [ ! -f "$JAR_FILE" ]; then
+    echo "Error: $JAR_FILE not found!"
+    exit 1
+fi
+
+# Check if an argument is provided
+if [ "$#" -ne 1 ]; then
+    # Run with no argument
+    java -jar "$JAR_FILE"
+fi
+
+# Run the .jar file with the provided argument
+java -jar "$JAR_FILE" "$1"
