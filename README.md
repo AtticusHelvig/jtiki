@@ -37,3 +37,15 @@ Assuming you are in the jtiki directory and have ant installed, run the followin
 ```
 ant gen
 ```
+
+## How to run
+
+If you built jtiki from source, you should have a bash script `jtiki` which you can run with the following command inside the jtiki directory.
+```
+./jtiki
+```
+
+If you downloaded the jar from the release tab, use the following command.
+```
+java -jar jtiki.jar
+```
